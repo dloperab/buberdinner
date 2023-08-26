@@ -1,15 +1,32 @@
+using BuberDinner.Application.Common.Interfaces.Authentication;
+
 namespace BuberDinner.Application.Services.Authentication;
 
 public class AuthenticationService : IAuthenticationService
 {
-  public AuthenticationResult Register(string firstName, string lastName, string email, string password)
+  private readonly IJwtTokenGeneration _jwtTokenGeneration;
+
+    public AuthenticationService(IJwtTokenGeneration jwtTokenGeneration)
+    {
+        _jwtTokenGeneration = jwtTokenGeneration;
+    }
+
+    public AuthenticationResult Register(string firstName, string lastName, string email, string password)
   {
+    // Check if the user exists
+
+    // Create user (generate unique ID)
+    var userId = Guid.NewGuid();
+
+    // Create JWT token
+    var token = _jwtTokenGeneration.GenerateToken(userId, firstName, lastName);
+
     return new AuthenticationResult(
-      Guid.NewGuid(),
+      userId,
       firstName,
       lastName,
       email,
-      "token");
+      token);
   }
 
   public AuthenticationResult Login(string email, string password)
